@@ -16,6 +16,10 @@
 <?php
 $tournament_id = $_GET['id'] ?? 0;
 
+if ($tournament_id == 0) {
+    die("Invalid Tournament ID");
+}
+
 /* TOURNAMENT INFO */
 $tournament = pg_fetch_assoc(pg_query($conn, "
 SELECT t.*, s.sname
@@ -30,9 +34,11 @@ if (!$tournament) {
 }
 
 echo "<h2>{$tournament['tname']}</h2>";
-echo "<p><b>Sport:</b> {$tournament['sname']} |
+echo "<p>
+<b>Sport:</b> {$tournament['sname']} |
 <b>Dates:</b> {$tournament['start_date']} to {$tournament['end_date']} |
-<b>Format:</b> {$tournament['format']}</p>";
+<b>Format:</b> {$tournament['format']}
+</p>";
 ?>
 
 <hr>
@@ -45,25 +51,39 @@ echo "<p><b>Sport:</b> {$tournament['sname']} |
 <th>Venue</th>
 <th>Date</th>
 <th>Status</th>
+<th>Actions</th>
 </tr>
 
 <?php
 $matches = pg_query($conn, "
 SELECT m.*, v.v_name
 FROM match m
-JOIN venue v ON m.venue_id = v.venue_id
+LEFT JOIN venue v ON m.venue_id = v.venue_id
 WHERE m.tournament_id = $tournament_id
+ORDER BY m.match_date
 ");
 
+if (!$matches) {
+    die("Query failed: " . pg_last_error($conn));
+}
+
 if (pg_num_rows($matches) == 0) {
-    echo "<tr><td colspan='4'>No matches in this tournament</td></tr>";
+    echo "<tr><td colspan='5'>No matches in this tournament</td></tr>";
 } else {
     while ($m = pg_fetch_assoc($matches)) {
+
+        $venue = $m['v_name'] ? $m['v_name'] : "No Venue";
+
         echo "<tr>
         <td>{$m['match_id']}</td>
-        <td>{$m['v_name']}</td>
+        <td>{$venue}</td>
         <td>{$m['match_date']}</td>
         <td>{$m['status']}</td>
+        <td>
+            <a class='btn' href='../matches/scorecard.php?match_id={$m['match_id']}'>Scorecard</a>
+            <a class='btn' href='../matches/edit.php?id={$m['match_id']}'>Edit</a>
+            <a class='btn' href='../matches/delete.php?id={$m['match_id']}'>Delete</a>
+        </td>
         </tr>";
     }
 }
