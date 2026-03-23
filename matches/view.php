@@ -48,9 +48,10 @@ while ($row = pg_fetch_assoc($result)) {
 <td>{$row['match_date']}</td>
 <td>{$row['status']}</td>
 <td>
-    <a class='btn' href='edit.php?id={$row['match_id']}'>Edit</a>
-    <a class='btn' href='delete.php?id={$row['match_id']}'>Delete</a>
-    <a class='btn' href='details.php?id={$row['match_id']}'>View Teams</a>
+<a class='btn' href='scorecard.php?match_id={$row['match_id']}'>Scorecard</a>
+<a class='btn' href='edit.php?id={$row['match_id']}'>Edit</a>
+<a class='btn' href='delete.php?id={$row['match_id']}'>Delete</a>
+<a class='btn' href='details.php?id={$row['match_id']}'>View Teams</a>
 </td>
 </tr>";
 }
