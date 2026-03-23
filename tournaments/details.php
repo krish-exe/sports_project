@@ -1,0 +1,79 @@
+<?php include '../db.php'; ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tournament Details</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<?php include '../navbar.php'; ?>
+
+<div class="container">
+
+<?php
+$tournament_id = $_GET['id'] ?? 0;
+
+/* TOURNAMENT INFO */
+$tournament = pg_fetch_assoc(pg_query($conn, "
+SELECT t.*, s.sname
+FROM tournament t
+JOIN sport s ON t.sport_id = s.sport_id
+WHERE t.tournament_id = $tournament_id
+"));
+
+if (!$tournament) {
+    echo "<h3>Tournament not found</h3>";
+    exit;
+}
+
+echo "<h2>{$tournament['tname']}</h2>";
+echo "<p><b>Sport:</b> {$tournament['sname']} |
+<b>Dates:</b> {$tournament['start_date']} to {$tournament['end_date']} |
+<b>Format:</b> {$tournament['format']}</p>";
+?>
+
+<hr>
+
+<h3>Matches in this Tournament</h3>
+
+<table>
+<tr>
+<th>ID</th>
+<th>Venue</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+<?php
+$matches = pg_query($conn, "
+SELECT m.*, v.v_name
+FROM match m
+JOIN venue v ON m.venue_id = v.venue_id
+WHERE m.tournament_id = $tournament_id
+");
+
+if (pg_num_rows($matches) == 0) {
+    echo "<tr><td colspan='4'>No matches in this tournament</td></tr>";
+} else {
+    while ($m = pg_fetch_assoc($matches)) {
+        echo "<tr>
+        <td>{$m['match_id']}</td>
+        <td>{$m['v_name']}</td>
+        <td>{$m['match_date']}</td>
+        <td>{$m['status']}</td>
+        </tr>";
+    }
+}
+?>
+
+</table>
+
+<br>
+<a href="view.php"><button>Back</button></a>
+
+</div>
+</body>
+</html>
