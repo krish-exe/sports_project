@@ -4,9 +4,12 @@
 <?php
 include '../db.php';
 
-$id = $_GET['id'];
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($id == 0) die("Invalid team ID");
+
 $result = pg_query($conn, "SELECT * FROM team WHERE team_id = $id");
 $row = pg_fetch_assoc($result);
+if (!$row) die("Team not found");
 ?>
 
 <h2>Edit Team</h2>
@@ -15,16 +18,17 @@ $row = pg_fetch_assoc($result);
 
 <input type="hidden" name="id" value="<?php echo $row['team_id']; ?>">
 
-Name: <input type="text" name="tname" value="<?php echo $row['tname']; ?>"><br><br>
+Name: <input type="text" name="tname" value="<?php echo htmlspecialchars($row['tname']); ?>"><br><br>
 
-City: <input type="text" name="city" value="<?php echo $row['city']; ?>"><br><br>
+City: <input type="text" name="city" value="<?php echo htmlspecialchars($row['city']); ?>"><br><br>
 
-Country: <input type="text" name="country" value="<?php echo $row['country']; ?>"><br><br>
+Country: <input type="text" name="country" value="<?php echo htmlspecialchars($row['country']); ?>"><br><br>
 
 Sport:
 <select name="sport_id">
 <?php
-$sports = pg_query($conn, "SELECT * FROM sport");
+/* Only show team sports */
+$sports = pg_query($conn, "SELECT * FROM sport WHERE is_team_sport = TRUE ORDER BY sname");
 
 while ($s = pg_fetch_assoc($sports)) {
     $selected = ($s['sport_id'] == $row['sport_id']) ? "selected" : "";

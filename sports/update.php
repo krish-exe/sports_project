@@ -9,9 +9,11 @@ if ($id == 0 || empty($name)) {
     die("Invalid input");
 }
 
-$result = pg_query_params($conn,
-    "UPDATE sport SET sname = $1, is_team_sport = $2 WHERE sport_id = $3",
-    array($name, $type, $id)
+/* Cast to proper boolean for PostgreSQL */
+$is_team = ($type === '1') ? 'TRUE' : 'FALSE';
+
+$result = pg_query($conn,
+    "UPDATE sport SET sname = '$name', is_team_sport = $is_team WHERE sport_id = $id"
 );
 
 if (!$result) {

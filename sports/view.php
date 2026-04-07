@@ -27,11 +27,15 @@
 $result = pg_query($conn, "SELECT * FROM sport");
 
 while ($row = pg_fetch_assoc($result)) {
-    $type = $row['is_team_sport'] ? "Team" : "Individual";
+    $type = ($row['is_team_sport'] === 't') ? "Team" : "Individual";
 
     echo "<tr>
         <td>{$row['sport_id']}</td>
-        <td>{$row['sname']}</td>
+        <td>
+            <a href='details.php?id={$row['sport_id']}' style='color:#fff; text-decoration:underline;'>
+                {$row['sname']}
+            </a>
+        </td>
         <td>{$type}</td>
         <td>
             <a class='btn' href='edit.php?id={$row['sport_id']}'>Edit</a>

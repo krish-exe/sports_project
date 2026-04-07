@@ -1,20 +1,24 @@
 <?php
 include '../db.php';
 
-$name = $_POST['sname'];
-$type = $_POST['is_team_sport'];
+$name = trim($_POST['sname']);
+$type = $_POST['is_team_sport']; // "1" or "0"
 
-/* VALIDATION */
 if (empty($name)) {
     die("Sport name required");
 }
 
-pg_query_params($conn,
-    "INSERT INTO sport (sname, is_team_sport)
-     VALUES ($1, $2)",
-    array($name, $type)
+/* Cast to proper boolean for PostgreSQL */
+$is_team = ($type === '1') ? 'TRUE' : 'FALSE';
+
+$result = pg_query($conn,
+    "INSERT INTO sport (sname, is_team_sport) VALUES ('$name', $is_team)"
 );
 
-echo "Sport added successfully<br>";
-echo "<a href='view.php'>Back</a>";
+if (!$result) {
+    die("Insert failed: " . pg_last_error($conn));
+}
+
+header("Location: view.php");
+exit;
 ?>

@@ -14,18 +14,21 @@
 <form action="insert.php" method="POST">
 
 Sport Name:
-<input type="text" name="sname" required minlength="2"><br>
+<input type="text" name="sname" required minlength="2"><br><br>
 
 Type:
 <select name="is_team_sport" required>
     <option value="">Select</option>
     <option value="1">Team Sport</option>
     <option value="0">Individual Sport</option>
-</select><br>
+</select><br><br>
 
 <button type="submit">Add Sport</button>
 
 </form>
+
+<br>
+<a href="view.php">Back</a>
 
 </div>
 </body>

@@ -29,8 +29,8 @@ Sport Name:
 
 Type:
 <select name="is_team_sport" required>
-    <option value="1" <?php if ($row['is_team_sport']) echo 'selected'; ?>>Team Sport</option>
-    <option value="0" <?php if (!$row['is_team_sport']) echo 'selected'; ?>>Individual Sport</option>
+    <option value="1" <?php echo ($row['is_team_sport'] === 't') ? 'selected' : ''; ?>>Team Sport</option>
+    <option value="0" <?php echo ($row['is_team_sport'] !== 't') ? 'selected' : ''; ?>>Individual Sport</option>
 </select><br><br>
 
 <button type="submit">Update</button>

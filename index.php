@@ -22,15 +22,21 @@ $sports = pg_query($conn, "SELECT * FROM sport");
 
 while ($s = pg_fetch_assoc($sports)) {
 
-    // Icon based on type
-   
+    $is_team = ($s['is_team_sport'] === 't');
 
-    // Clickable card
+    /* Route to correct view */
+    $link = $is_team
+        ? "teams/view.php?sport_id={$s['sport_id']}"
+        : "players/view.php?sport_id={$s['sport_id']}";
+
+    $type_label = $is_team ? "Team Sport" : "Individual Sport";
+    $icon = $is_team ? "👥" : "🏃";
+
     echo "
-    <a href='teams/view.php?sport_id={$s['sport_id']}' style='text-decoration:none; color:inherit;'>
+    <a href='$link' style='text-decoration:none; color:inherit;'>
         <div class='card'>
-            <h3>{$s['sname']}</h3>
-           
+            <h3>{$icon} {$s['sname']}</h3>
+            <p style='opacity:0.7; font-size:0.85em;'>$type_label</p>
         </div>
     </a>
     ";
